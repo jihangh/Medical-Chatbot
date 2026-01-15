@@ -1,6 +1,6 @@
 from app.services.data_loader import load_pdf
 from app.services.data_processor import medical_filter_docs
-
+from app.services.data_chunker import chunk_documents
 if __name__ == "__main__":
     
     #pdf url and name
@@ -12,3 +12,6 @@ if __name__ == "__main__":
 
     #filter and preprocess documents
     medical_filtered_docs= medical_filter_docs(pdf_docs)
+
+    #chunk the documents
+    final_chunks= chunk_documents(medical_filtered_docs)
