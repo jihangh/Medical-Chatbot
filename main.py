@@ -1,6 +1,8 @@
-from app.services.data_loader import load_pdf
-from app.services.data_processor import medical_filter_docs
-from app.services.data_chunker import chunk_documents
+from app.services.data_ingestion.data_loader import load_pdf
+from app.services.data_ingestion.data_processor import medical_filter_docs
+from app.services.data_ingestion.data_chunker import chunk_documents
+
+
 if __name__ == "__main__":
     
     #pdf url and name
