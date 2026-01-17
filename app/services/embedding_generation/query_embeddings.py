@@ -23,4 +23,5 @@ def generate_query_embeddings(query, dense_model,dim, openai_client, pinecone_ve
     except Exception as e:
         logger.error(f"Error generating sparse query embeddings: {e}")
         raise e
+    logger.info("Generated query embeddings successfully.")
     return dense_query_embedding, sparse_query_embedding
