@@ -1,8 +1,8 @@
 
 from tqdm import tqdm
 import time
-from app.services.embedding_generation.dense_embeddings import generate_dense_embeddings
-from app.services.embedding_generation.sparse_embeddings import generate_sparse_embeddings
+from app.services.embedding_generation.doc_embeddings import generate_dense_embeddings, generate_sparse_embeddings
+
 from pinecone.grpc import PineconeGRPC as Pinecone
 from pinecone import ServerlessSpec
 from app.utils.loggers import get_logger
@@ -35,7 +35,8 @@ def upsert_vectors(pinecone_vector_client, name_space,index_name, all_chunks, ba
                     dense_model,dim, sleep_time,openai_client):
     '''Upsert vectors into Pinecone index in batches'''
     
-    index = pinecone_vector_client.Index(index_name)
+    
+
     for i in tqdm(range(0, len(all_chunks), batch_size)):
         # set end position of batch
         i_end = min(i + batch_size, len(all_chunks))
@@ -45,9 +46,11 @@ def upsert_vectors(pinecone_vector_client, name_space,index_name, all_chunks, ba
         ids_batch = [str(n) for n in range(i, i_end)]
         
         # create dense embeddings
-        dense_embeddings = generate_dense_embeddings(lines_batch, dense_model,dim, openai_client)
+        dense_embeddings = generate_dense_embeddings(text_input=lines_batch, dense_model=dense_model,dim=dim,
+                                                      openai_client=openai_client)
         # Convert the chunk_text into sparse vectors
-        sparse_embeddings = generate_sparse_embeddings(pinecone_vector_client, lines_batch_chunk)
+        sparse_embeddings = generate_sparse_embeddings(pinecone_vector_client=pinecone_vector_client,
+                                                       text_input=lines_batch)
         
         # prep metadata and upsert batch
         meta = [line.metadata for line in lines_batch_chunk]
@@ -73,6 +76,7 @@ def upsert_vectors(pinecone_vector_client, name_space,index_name, all_chunks, ba
         # Upsert the records
         # The `chunk_text` fields are converted to dense and sparse vectors
         try:
+            index = pinecone_vector_client.Index(index_name)
             index.upsert(vectors= records_embed, namespace= name_space)
         except Exception as e:
             logger.error(f"Error upserting vectors of batch {i_end}: {e}")
