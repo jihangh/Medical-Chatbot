@@ -13,21 +13,7 @@ def clean_chunk_prefix(text: str) -> str:
     return re.sub(r'^[.:]\s*', '', text)
 
 
-# def post_clean(docs) -> List[Document]:
-#     ''' clean chunks from prefixes'''
-#     post_med_filter_doc= []
-#     for i, doc in enumerate(docs):
-        
-#             src= doc.metadata.get('source')
-#             pg= doc.metadata.get('page')
-#             temp_doc= Document(metadata={"page": pg, "source": src},
-#                     page_content= clean_chunk_prefix(doc.page_content)
-                    
-#                 )
-#             post_med_filter_doc.append(temp_doc)
-#     return post_med_filter_doc
-
-
+#chunk documents into smaller pieces
 def chunk_documents(docs) -> List[Document]:
     """Chunk documents into smaller pieces"""
 
