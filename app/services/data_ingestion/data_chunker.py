@@ -3,7 +3,7 @@ from langchain_core.documents import Document
 from typing import List
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.utils.loggers import get_logger
-
+from app.utils.exceptions import DataProcessingError
 logger= get_logger(__name__)
 
 
@@ -41,10 +41,9 @@ def chunk_documents(docs) -> List[Document]:
                 temp_doc= Document(metadata={"page": pg, "source": src},
                         page_content= clean_chunk_prefix(chunk.page_content))
                 all_chunks.append(temp_doc)
-
-        
+        logger.info(f"Chunked documents into {len(all_chunks)} pieces")
     except Exception as e:
-        logger.error(f"Error in chunk_documents: {e}")
-        raise e
+        logger.error(f"Data processing error in chunk_documents: {e}")
+        raise DataProcessingError(f"Failed to chunk documents due to data processing error: {e}")
     logger.info(f"{len(all_chunks)} Text chunks obtained")
     return all_chunks

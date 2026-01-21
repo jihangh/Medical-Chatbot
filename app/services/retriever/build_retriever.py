@@ -1,5 +1,9 @@
 from app.services.retriever.hybrid_retriever import HybridRetriever
 from app.services.embedding_generation.query_embeddings import generate_query_embeddings
+from app.utils.loggers import get_logger
+from app.utils.exceptions import HybridRetreiverError
+
+logger = get_logger(__name__)
 
 
 def retrieve_docs(
@@ -14,20 +18,30 @@ def retrieve_docs(
     alpha: float
 ):
     """Retrieve documents from Pinecone index using hybrid retrieval."""
-    
-    dense_query_embedding, sparse_query_embedding = generate_query_embeddings(query=query, 
-                                                                              dense_model=dense_model, 
-                                                                              dim=dim, 
-                                                                              openai_client=openai_client, 
-                                                                              pinecone_vector_client=pinecone_vector_client)
+    try:
 
-    """Perform hybrid search on Pinecone index using dense and sparse query embeddings."""
-    hybrid_retriever = HybridRetriever(pinecone_vector_client=pinecone_vector_client, 
-                                       index_name=index_name, 
-                                       name_space=name_space)
-    
-    query_response= hybrid_retriever.contextual_hybrid_search(
-                             dense_query_embedding=dense_query_embedding, sparse_query_embedding=sparse_query_embedding,
-                             top_ret_doc=top_ret_doc, alpha=alpha)
-    retrieved_docs=[query_response.matches[i].metadata['text'] for i in range(top_ret_doc)]
+        #generate query embeddings
+        dense_query_embedding, sparse_query_embedding = generate_query_embeddings(query, 
+                                                                                dense_model, 
+                                                                                dim, 
+                                                                                openai_client, 
+                                                                                pinecone_vector_client)
+        """Perform hybrid search on Pinecone index using dense and sparse query embeddings."""
+        # Initialize HybridRetriever
+        hybrid_retriever = HybridRetriever(pinecone_vector_client, 
+                                        index_name, 
+                                        name_space)
+        #retrieve similar documents from Pinecone based on hybrid retrieval
+        
+        query_response= hybrid_retriever.contextual_hybrid_search(
+                                dense_query_embedding, 
+                                sparse_query_embedding,
+                                top_ret_doc, 
+                                alpha)
+        #get the content of the most similar retrieved documents
+        retrieved_docs=[query_response.matches[i].metadata['text'] for i in range(top_ret_doc)]
+    except Exception as hre:
+        logger.error(f"Error during document retrieval: {hre}")
+        raise HybridRetreiverError(f"Error during document retrieval: {hre}")
+    logger.info(f"Retrieved {len(retrieved_docs)} documents for the query.")
     return retrieved_docs

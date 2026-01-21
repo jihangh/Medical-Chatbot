@@ -1,15 +1,17 @@
 pinecone:
-  index_name: 'hybrid-index'  #"medical-chatbot-index"
-  name_space: "hybrid-namespace"  #"medical-namespace"
+  index_name: "medical-chatbot-index" #'hybrid-index'
+  name_space:  "medical-namespace" #"hybrid-namespace"
 
 openai:
   model: "gpt-5-nano"
 
 retriever:
-  dim: 1024
+  dim: 256
   top_ret_doc: 3
   alpha: 0.25
   dense_model: "text-embedding-3-large"
+
+vector_store:
   #batch size for upsert
   batch_size: 1
   #sleep time between upsert batches

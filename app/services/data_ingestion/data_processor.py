@@ -2,6 +2,7 @@ import re
 from langchain_core.documents import Document
 from typing import List
 from app.utils.loggers import get_logger
+from app.utils.exceptions import DocumentFilterError
 
 logger = get_logger(__name__)
 
@@ -69,9 +70,9 @@ def medical_filter_docs(docs) -> List[Document]:
                         
                     )
                 med_filter_doc.append(temp_doc)
-    except Exception as e:
-        logger.error(f"Error in medical_filter_docs: {e}")
-        raise e
+    except Exception  as dfe:
+        logger.error(f"Document filtering error in medical_filter_docs: {dfe}")
+        raise DocumentFilterError(f"Failed to filter documents due to document filtering error: {dfe}")
     logger.info(f"Filtered and preprocessed to {len(med_filter_doc)} medical documents")
     return med_filter_doc
 

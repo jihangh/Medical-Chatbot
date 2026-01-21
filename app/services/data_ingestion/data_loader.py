@@ -4,6 +4,7 @@ from app.utils.loggers import get_logger
 from langchain_core.documents import Document
 from typing import List
 from langchain_community.document_loaders import PyMuPDFLoader
+from app.utils.exceptions import NetworkError, PDFLoadError
 
 
 
@@ -20,17 +21,21 @@ def download_data(url, pdfname):
     
      #download file
     pdf_path = f"{DATA_DIR}/{pdfname}"
-    response = requests.get(url)
 
-    # Check if the download was successful
-    if response.status_code == 200:
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
         with open(pdf_path, "wb") as file:
             file.write(response.content)
         logger.info(f"Success! {pdf_path} downloaded.")
-    else:
-        #raise error if download fails
-        logger.error(f"Failed to download. Status code: {response.status_code}")
-        raise Exception(f"Failed to download file from {url}")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Download failed: {e}")
+        raise NetworkError(
+            "Failed to download and save PDF" )
+    except Exception as e:
+        logger.error(f"An unexpected error occurred: {e}")
+        raise e
+
 
 
 def load_pdf(url, pdfname) -> List[Document]:
@@ -49,8 +54,7 @@ def load_pdf(url, pdfname) -> List[Document]:
         documents = loader.load()
 
         logger.info(f"Loaded {len(documents)} pages")
-
     except Exception as e:
-        logger.error(f"Error loading PDF: {e}")
-        raise e
+        logger.error(f"PDF loading error: {e}")
+        raise PDFLoadError(f"Failed to load PDF due to PDF loading error: {e}")
     return documents

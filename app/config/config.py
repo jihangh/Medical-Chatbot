@@ -16,6 +16,8 @@ class RAGConfig:
     openai_client: OpenAI
     dense_model: str
     dim: int
+    batch_size: int
+    sleep_time: float
     top_ret_doc: int
     alpha: float
     model_name: str  # Name of the LLM model (from YAML)
@@ -38,6 +40,8 @@ class RAGConfig:
             openai_client=OpenAI(api_key=openai_api_key),
             dense_model=cfg["retriever"]["dense_model"],
             dim=cfg["retriever"]["dim"],
+            batch_size=cfg["vector_store"]["batch_size"],
+            sleep_time=cfg["vector_store"]["sleep_time"],
             top_ret_doc=cfg["retriever"]["top_ret_doc"],
             alpha=cfg["retriever"]["alpha"],
             model_name=cfg["openai"]["model"],

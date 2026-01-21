@@ -1,57 +1,58 @@
 from app.services.retriever.build_retriever import retrieve_docs
 from app.config.config import RAGConfig
 from langchain.agents.middleware import dynamic_prompt, ModelRequest
+from app.services.prompting.prompt_loader import load_system_prompt
 import openai
 from openai import OpenAI
 from langchain.agents import create_agent
 from pinecone.grpc import PineconeGRPC as Pinecone
 from pathlib import Path
+from app.utils.exceptions import BuildContextPromptError, RagChainError, AppBaseException
+
 from app.utils.loggers import get_logger
 
 logger= get_logger(__name__)
 
-#global sys_config
-sys_config= RAGConfig.from_yaml("app/config/config.yaml")
-
-@dynamic_prompt
-def prompt_with_context(request: ModelRequest ) -> str: #config: RAGConfig
-    
-    last_query = request.state["messages"][-1].text
-
-    retrieved_docs = retrieve_docs(
-        pinecone_vector_client=sys_config.pinecone_vector_client,
-        index_name=sys_config.index_name,
-        name_space=sys_config.name_space,
-        openai_client=sys_config.openai_client,
-        dense_model=sys_config.dense_model,
-        dim=sys_config.dim,
-        query=last_query,
-        top_ret_doc=sys_config.top_ret_doc,
-        alpha=sys_config.alpha,
-    )
 
 
-    docs_content = "\n\n".join(doc for doc in retrieved_docs)
-    
 
-    PROMPT_PATH = Path("prompts/system_prompt.txt")
+# Build dynamic prompt with retrieved context
+def build_prompt_with_context(sys_config: RAGConfig):
+    try:
+        sys_prompt = load_system_prompt("app/resources/prompts/system_prompt.txt")
 
-    with open(PROMPT_PATH, "r", encoding="utf-8") as f:
-        sys_prompt = f.read()
+        @dynamic_prompt
+        def prompt_with_context(request: ModelRequest) -> str:
+            last_query = request.state["messages"][-1].text
+
+            retrieved_docs = retrieve_docs(
+                pinecone_vector_client=sys_config.pinecone_vector_client,
+                index_name=sys_config.index_name,
+                name_space=sys_config.name_space,
+                openai_client=sys_config.openai_client,
+                dense_model=sys_config.dense_model,
+                dim=sys_config.dim,
+                query=last_query,
+                top_ret_doc=sys_config.top_ret_doc,
+                alpha=sys_config.alpha,
+            )
+
+            docs_content = "\n\n".join(retrieved_docs)
+
+            system_message = f"{sys_prompt}\n\n{docs_content}"
+
+            return system_message
+    except Exception as bcpe:
+        logger.error(f"Error building context prompt: {bcpe}")
+        raise BuildContextPromptError(f"Error building context prompt: {bcpe}")
+    return prompt_with_context
 
 
-    system_message = (
-        f"{sys_prompt}"
-        f"\n\n{docs_content}"
-    )
 
-    return system_message
-
-
-def rag_assistant(query, prompt_with_context, model, history=None):
+def rag_assistant(query, build_prompt_with_contex, model, history=None):
     try:
         final_answer = []
-        agent = create_agent(model, tools=[], middleware=prompt_with_context)
+        agent = create_agent(model, tools=[], middleware=build_prompt_with_contex)
         for step in agent.stream(
             {"messages": [{"role": "user", "content": query}]},
             {"configurable": {"thread_id": "1"}}, 
@@ -73,7 +74,13 @@ def rag_assistant(query, prompt_with_context, model, history=None):
        
             
         answer = "".join(final_answer[-1]).strip()
+    except AppBaseException as dce:
+        logger.error(f"Domain error while running RAG assistant: {dce}")
+        raise dce
+
     except Exception as e:
-        logger.error('Failed to run the rag chain, error: {}'.format(e))
-        raise Exception('RAG chain execution failed: {}'.format(e))
-    return answer if answer else "I'm sorry, I couldn't find an answer to your question."
+        logger.error("Unexpected error while running RAG assistant")
+        raise RagChainError("Failed to run the rag chain") from e
+
+    logger.info("RAG assistant generated an answer successfully.")
+    return answer or "I'm sorry, I couldn't find an answer to your question."
