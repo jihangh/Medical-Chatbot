@@ -14,14 +14,14 @@ def clean_chunk_prefix(text: str) -> str:
 
 
 #chunk documents into smaller pieces
-def chunk_documents(docs) -> List[Document]:
+def chunk_documents(docs, chunk_size: int, chunk_overlap: int) -> List[Document]:
     """Chunk documents into smaller pieces"""
 
     try:    
         #recursiveCharacterTextSplitter with medical-specific separators
         text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=850,         # Ideal for clinical explanations
-        chunk_overlap=100,      # Preserves continuity
+        chunk_size=chunk_size,         # Ideal for clinical explanations
+        chunk_overlap=chunk_overlap,      # Preserves continuity
         separators=["\n\n",             # Section boundaries (strongest)
                     "\n\n",             # Section boundaries (strongest)
                     "\n",               # Paragraph boundaries

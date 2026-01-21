@@ -10,6 +10,10 @@ load_dotenv()  # Loads .env automatically
 
 @dataclass
 class RAGConfig:
+    url: str
+    pdfname: str
+    chunk_size: int
+    chunk_overlap: int
     pinecone_vector_client: Pinecone
     index_name: str
     name_space: str
@@ -34,6 +38,10 @@ class RAGConfig:
         openai_api_key = os.environ["OPENAI_API_KEY"]
 
         return RAGConfig(
+            url=cfg["knowledge_base"]["url"],
+            pdfname=cfg["knowledge_base"]["pdfname"],
+            chunk_size=cfg["knowledge_base"]["chunk_size"],
+            chunk_overlap=cfg["knowledge_base"]["chunk_overlap"],
             pinecone_vector_client=Pinecone(api_key=pinecone_api_key),
             index_name=cfg["pinecone"]["index_name"],
             name_space=cfg["pinecone"]["name_space"],

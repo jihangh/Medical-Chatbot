@@ -1,3 +1,9 @@
+knowledge_base:
+  url: "https://staibabussalamsula.ac.id/wp-content/uploads/2024/06/The-Gale-Encyclopedia-of-Medicine-3rd-Edition-staibabussalamsula.ac_.id_.pdf"
+  pdfname: "The-Gale-Encyclopedia-of-Medicine-3rd-Edition-staibabussalamsula.ac_.id_.pdf"
+  chunk_size: 850
+  chunk_overlap: 100
+
 pinecone:
   index_name: "medical-chatbot-index" #'hybrid-index'
   name_space:  "medical-namespace" #"hybrid-namespace"

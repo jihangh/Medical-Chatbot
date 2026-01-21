@@ -18,6 +18,7 @@ logger= get_logger(__name__)
 
 # Build dynamic prompt with retrieved context
 def build_prompt_with_context(sys_config: RAGConfig):
+    '''Builds a dynamic prompt function that incorporates retrieved documents into the system prompt.'''
     try:
         sys_prompt = load_system_prompt("app/resources/prompts/system_prompt.txt")
 
@@ -50,6 +51,7 @@ def build_prompt_with_context(sys_config: RAGConfig):
 
 
 def rag_assistant(query, build_prompt_with_contex, model, history=None):
+    '''Runs the RAG assistant by creating an agent with the provided model and prompt middleware.'''
     try:
         final_answer = []
         agent = create_agent(model, tools=[], middleware=build_prompt_with_contex)

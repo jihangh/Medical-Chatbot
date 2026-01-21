@@ -30,7 +30,7 @@ def main():
         sys_config = RAGConfig.from_yaml(config_filepath) 
            
         #build medical vector store pf the pdf document           
-        #build_medical_vector_store(config=sys_config)
+        build_medical_vector_store(config=sys_config)
     except AppBaseException as abe:
         logger.exception(f"Application error during main execution: {abe}")
         sys.exit(1)

@@ -18,7 +18,8 @@ def build_medical_vector_store(config: RAGConfig):
         processed_docs= medical_filter_docs(pdf_docs)
 
         #chunk the documents
-        chunks= chunk_documents(processed_docs)
+        chunks= chunk_documents(processed_docs, config.chunk_size, config.chunk_overlap)
+        logger.info(f" chunks created from the document: {chunks[0:2]} ")
         #initialize VectorStoreService
         vector_store_service = VectorStoreService(
             config.pinecone_vector_client,
@@ -34,7 +35,7 @@ def build_medical_vector_store(config: RAGConfig):
         vector_store_service.create_vector_index()
 
         # #generate dense and sparse embeddings and upsert them into Pinecone
-        vector_store_service.upsert_vectors(all_chunks=chunks)
+        vector_store_service.upsert_vectors(all_chunks=chunks[:1])
     except Exception as bkbe:
         logger.error(f"Error building medical vector store: {bkbe}") 
         raise BuildKnowledgeBaseError(f"Failed to build medical vector store: {bkbe}")

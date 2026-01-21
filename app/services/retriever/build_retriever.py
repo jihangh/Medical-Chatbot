@@ -39,7 +39,9 @@ def retrieve_docs(
                                 top_ret_doc, 
                                 alpha)
         #get the content of the most similar retrieved documents
-        retrieved_docs=[query_response.matches[i].metadata['text'] for i in range(top_ret_doc)]
+        num_docs = min(top_ret_doc, len(query_response.matches))
+        retrieved_docs = [query_response.matches[i].metadata['text'] for i in range(num_docs)]
+
     except Exception as hre:
         logger.error(f"Error during document retrieval: {hre}")
         raise HybridRetreiverError(f"Error during document retrieval: {hre}")
