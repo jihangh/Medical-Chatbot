@@ -7,14 +7,17 @@ from openai import OpenAI
 from langchain.agents import create_agent
 from pinecone.grpc import PineconeGRPC as Pinecone
 from pathlib import Path
+from langgraph.checkpoint.memory import InMemorySaver 
+
+
 from app.utils.exceptions import BuildContextPromptError, RagChainError, AppBaseException
 
 from app.utils.loggers import get_logger
 
 logger= get_logger(__name__)
 
-
-
+# Initialize in-memory
+checkpointer=InMemorySaver()
 
 # Build dynamic prompt with retrieved context
 def build_prompt_with_context(sys_config: RAGConfig):
@@ -50,14 +53,17 @@ def build_prompt_with_context(sys_config: RAGConfig):
 
 
 
-def rag_assistant(query, build_prompt_with_contex, model, history=None):
+def rag_assistant(query, build_prompt_with_contex, model,session_id):
     '''Runs the RAG assistant by creating an agent with the provided model and prompt middleware.'''
     try:
         final_answer = []
-        agent = create_agent(model, tools=[], middleware=build_prompt_with_contex)
+        agent = create_agent(model=model, 
+                             tools=[], 
+                             middleware=build_prompt_with_contex,
+                             checkpointer=checkpointer)
         for step in agent.stream(
             {"messages": [{"role": "user", "content": query}]},
-            {"configurable": {"thread_id": "1"}}, 
+            {"configurable": {"thread_id": session_id}}, 
             stream_mode="values",
         ):
             
@@ -82,7 +88,7 @@ def rag_assistant(query, build_prompt_with_contex, model, history=None):
 
     except Exception as e:
         logger.error("Unexpected error while running RAG assistant")
-        raise RagChainError("Failed to run the rag chain") from e
+        raise Exception("Unexpected error while running RAG assistant") from e
 
     logger.info("RAG assistant generated an answer successfully.")
     return answer or "I'm sorry, I couldn't find an answer to your question."

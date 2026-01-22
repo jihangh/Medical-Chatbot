@@ -5,20 +5,20 @@ knowledge_base:
   chunk_overlap: 100
 
 pinecone:
-  index_name: "medical-chatbot-index" #'hybrid-index'
-  name_space:  "medical-namespace" #"hybrid-namespace"
+  index_name: "hybrid-index" #"medical-chatbot-index"
+  name_space:  "hybrid-namespace" #"medical-namespace"
 
 openai:
   model: "gpt-5-nano"
 
 retriever:
-  dim: 256
+  dim: 1024
   top_ret_doc: 3
   alpha: 0.25
   dense_model: "text-embedding-3-large"
 
 vector_store:
   #batch size for upsert
-  batch_size: 1
+  batch_size: 32
   #sleep time between upsert batches
   sleep_time: 2
