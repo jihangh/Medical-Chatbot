@@ -1,8 +1,8 @@
 # 🩺 Medical Chatbot with RAG
 
-A **Retrieval-Augmented Generation (RAG)** chatbot for general medical question answering, powered by **OpenAI GPT-5 nano** and built with **LangChain**. The system uses a **hybrid retrieval pipeline** to search trusted medical knowledge from *The Gale Encyclopedia of Medicine* and generate concise, contextual, and user-friendly answers.
+A **Retrieval-Augmented Generation (RAG)** chatbot for general medical question answering, powered by **OpenAI GPT-5 nano** and built with **LangChain**. The system uses a **hybrid retrieval pipeline** to search trusted medical knowledge from *The Gale Encyclopedia of Medicine* and generate concise, contextual, and informative answers.
 
-This project demonstrates how to combine modern LLMs with vector databases and sparse retrieval to build production-style medical QA systems.
+This project demonstrates how to combine modern LLMs with vector databases and hybrid retrieval to build effective medical QA systems.
 
 ---
 
