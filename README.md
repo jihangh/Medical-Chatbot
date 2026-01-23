@@ -64,7 +64,7 @@ Answer to User
 
 ---
 
-## 🧰 Tech Stack
+## 🔧 Tech Stack
 
 * **LLM:** OpenAI GPT-5 nano
 * **Framework:** LangChain
