@@ -53,8 +53,9 @@ class RAGConfig:
             top_ret_doc=cfg["retriever"]["top_ret_doc"],
             alpha=cfg["retriever"]["alpha"],
             model_name=cfg["openai"]["model"],
+            model_temperature=cfg["openai"]["temperature"],
         )
 
     def get_llm(self) -> ChatOpenAI:
         """Create the ChatOpenAI model object from the stored model name."""
-        return ChatOpenAI(model=self.model_name)
+        return ChatOpenAI(model=self.model_name, temperature=self.model_temperature)
