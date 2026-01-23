@@ -44,7 +44,7 @@ def main():
         sys_config = RAGConfig.from_yaml(config_filepath)
 
         # Build your vector store (can be skipped if already built)
-        #build_medical_vector_store(config=sys_config)
+        build_medical_vector_store(config=sys_config)
 
     except AppBaseException as abe:
         logger.exception(f"Application error during main execution: {abe}")

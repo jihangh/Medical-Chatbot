@@ -5,15 +5,15 @@ knowledge_base:
   chunk_overlap: 100
 
 pinecone:
-  index_name: "hybrid-index" #"medical-chatbot-index"
-  name_space:  "hybrid-namespace" #"medical-namespace"
+  index_name:  "medical-chatbot-index"
+  name_space:   "medical-namespace"
 
 openai:
   model: "gpt-5-nano"
   temperature: 0.2
 
 retriever:
-  dim: 1024 # 1024 for text-embedding-3-large
+  dim: 1024  # 256 for text-embedding-3-large
   top_ret_doc: 3
   alpha: 0.25 # weight for sparse vector similarity (scale between 0 and 1)
   dense_model: "text-embedding-3-large"

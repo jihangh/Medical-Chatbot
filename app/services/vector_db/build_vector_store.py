@@ -35,7 +35,7 @@ def build_medical_vector_store(config: RAGConfig):
         vector_store_service.create_vector_index()
 
         # #generate dense and sparse embeddings and upsert them into Pinecone
-        vector_store_service.upsert_vectors(all_chunks=chunks[:1])
+        vector_store_service.upsert_vectors(all_chunks=chunks)
     except Exception as bkbe:
         logger.error(f"Error building medical vector store: {bkbe}") 
         raise BuildKnowledgeBaseError(f"Failed to build medical vector store: {bkbe}")

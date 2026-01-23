@@ -46,4 +46,5 @@ def retrieve_docs(
         logger.error(f"Error during document retrieval: {hre}")
         raise HybridRetreiverError(f"Error during document retrieval: {hre}")
     logger.info(f"Retrieved {len(retrieved_docs)} documents for the query.")
+    logger.debug(f"Retrieved documents: {retrieved_docs}")
     return retrieved_docs

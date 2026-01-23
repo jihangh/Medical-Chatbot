@@ -25,6 +25,7 @@ class RAGConfig:
     top_ret_doc: int
     alpha: float
     model_name: str  # Name of the LLM model (from YAML)
+    model_temperature: float  # Temperature for the LLM model (from YAML)
 
     @staticmethod
     def from_yaml(path: str) -> "RAGConfig":
@@ -53,9 +54,10 @@ class RAGConfig:
             top_ret_doc=cfg["retriever"]["top_ret_doc"],
             alpha=cfg["retriever"]["alpha"],
             model_name=cfg["openai"]["model"],
-            model_temperature=cfg["openai"]["temperature"],
+            model_temperature=cfg["openai"]["temperature"]
         )
 
     def get_llm(self) -> ChatOpenAI:
         """Create the ChatOpenAI model object from the stored model name."""
-        return ChatOpenAI(model=self.model_name, temperature=self.model_temperature)
+        return ChatOpenAI(model=self.model_name, 
+                          temperature=self.model_temperature)

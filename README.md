@@ -82,13 +82,8 @@ Answer to User
 
 You can interact with the chatbot via the **Gradio interface** for real-time medical Q&A.
 
-Example queries:
-
-* "What are the symptoms of diabetes?"
-* "How is hypertension treated?"
-* "What causes migraine headaches?"
-* "Explain the difference between Type 1 and Type 2 diabetes."
-
+![Medical Chatbot Demo](assets/demo_screenshot0.PNG)
+*Screenshot: Multi-turn conversation showing context-aware answers*
 ---
 
 ## ✅ Prerequisites
