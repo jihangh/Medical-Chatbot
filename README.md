@@ -83,7 +83,8 @@ Answer to User
 You can interact with the chatbot via the **Gradio interface** for real-time medical Q&A.
 
 ![Medical Chatbot Demo](assets/demo_screenshot0.PNG)
-*Screenshot: Multi-turn conversation showing context-aware answers*
+<small>Screenshot: Multi-turn conversation showing context-aware answers</small>
+
 ---
 
 ## ✅ Prerequisites
